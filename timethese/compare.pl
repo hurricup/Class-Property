@@ -44,7 +44,7 @@ for( my $i = 0; $i < 3; $i++ )
 
 use Benchmark qw(timethese);
 
-timethese( 10000000, 
+timethese( 1000000, 
 {
     ' 1. Direct hash read           ' => sub{ my $var = $foo->{'testfield'}; },
     ' 2. Direct hash write          ' => sub{ $foo->{'testfield'} = 100; },
