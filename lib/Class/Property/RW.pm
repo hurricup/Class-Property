@@ -16,6 +16,7 @@ sub STORE
 {
     my( $self, $value ) = @_;
     ${$self}->{'object'}->{${$self}->{'field'}} = $value;
+    return;
 }
 
 sub FETCH
@@ -28,6 +29,7 @@ sub DESTROY
 {
     my( $self ) = @_;
     ${$self} = undef;
+    return;
 }
 
 1;

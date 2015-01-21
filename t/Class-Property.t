@@ -45,6 +45,25 @@ is( $foo->custom_get, $foo->{'custom_get'} + 1, 'RW custom property getter with 
 $foo->custom_get = 123;
 is( $foo->custom_get, 123 + 1, 'RW custom property getter with def setter' );
 
+is( $foo->custom_lazy, 100, 'Lazy init works');
+$foo->custom_lazy = 200;
+is( $foo->{'custom_lazy'}, 200, 'Setter works with lazy init' );
+is( $foo->custom_lazy, 200, 'Lazy init passed a second time');
+
+is( $foo->custom_lazy2, 300, 'Lazy init works on other field');
+$foo->custom_lazy2 = 400;
+is( $foo->custom_lazy2, 400, 'Lazy init passed a second time on other field');
+
+$foo->custom_lazy3 = 700;
+is( $foo->custom_lazy3, 700, 'Lazy init passed if setter been called before');
+
+is( $foo->lazy_ro, 123456, 'Lazy init on RO property');
+eval{ $foo->lazy_ro = 123; };
+ok( $@ =~ /Unable to set read-only property/, 'RO lazy property writing protection');
+
+$foo->{'lazy_ro'} = 9887987;
+is( $foo->lazy_ro, $foo->{'lazy_ro'}, 'Lazy init passed on second read of RO property');
+
 
 use Bar;
 my $bar = Bar->new(

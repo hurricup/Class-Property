@@ -1,53 +1,65 @@
 #!/usr/bin/perl -I../lib
 package Foo;
 use parent 'Class::Accessor';
-use Class::Accessor;
 
 __PACKAGE__->follow_best_practice();
 __PACKAGE__->mk_accessors('foo');
 
-sub new{ return bless {}, shift;}
-
-sub custom: lvalue
-{
-    my($self) = @_;
-    return $self->{'testfield'};
-}
 
 package Bar;
 use parent 'Class::Accessor::Fast';
-use Class::Accessor::Fast;
 
 __PACKAGE__->follow_best_practice();
 __PACKAGE__->mk_accessors('bar');
 
+
+package Baz;
+use Class::Property;
+
 sub new{ return bless {}, shift;}
 
+rw_property('test_rw');
+ro_property('test_ro');
+wo_property('test_wo');
+
+property( 'test_lazy' => {'get_lazy' => \&lazy_init, 'set' => undef } );
+sub lazy_init{ return 100; }
+
+property( 'custom' => {'get' => \&my_get, 'set' => \&my_set });
+
+sub my_get{ return shift->{'custom'}; }
+sub my_set{ shift->{'custom'} = shift; }
+
 package main;
-use Class::Property::Default;
 
 my $foo = Foo->new();
 my $bar = Bar->new();
-
+my $baz = Baz->new();
 
 for( my $i = 0; $i < 3; $i++ )
 {
-    $foo->custom = $i;
-    print "$foo->{'testfield'}\n";
+    $baz->test_rw = $i;
+    print "$baz->{'test_rw'}\n";
 }
 
 use Benchmark qw(timethese);
 
 timethese( 10000000, 
 {
-    'Class::Property Reading      ' => sub{ $foo->custom; },
-    'Class::Property Writing      ' => sub{ $foo->custom = 100; },
-    'Class::Accessor Reading      ' => sub{ $foo->get_foo(); },
-    'Class::Accessor Writing      ' => sub{ $foo->set_foo(100); },
-    'Class::Accessor::Fast Reading' => sub{ $bar->get_bar(); },
-    'Class::Accessor::Fast Writing' => sub{ $bar->set_bar(100); },
-    'Direct Reading               ' => sub{ $foo->{'testfield'}; },
-    'Direct Writing               ' => sub{ $foo->{'testfield'} = 100; },
+    ' 1. Direct hash read           ' => sub{ my $var = $foo->{'testfield'}; },
+    ' 2. Direct hash write          ' => sub{ $foo->{'testfield'} = 100; },
+    ' 3. Class::Property rw read    ' => sub{ my $var = $baz->test_rw; },
+    ' 4. Class::Property rw write   ' => sub{ $baz->test_rw = 100; },
+    ' 5. Class::Property lrw read   ' => sub{ my $var = $baz->test_lazy; },
+    ' 6. Class::Property lrw write  ' => sub{ $baz->test_lazy = 100; },
+    ' 7. Class::Accessor::Fast read ' => sub{ my $var = $bar->get_bar(); },
+    ' 8. Class::Accessor::Fast write' => sub{ $bar->set_bar(100); },
+    ' 9. Class::Accessor read       ' => sub{ my $var = $foo->get_foo(); },
+    '10. Class::Accessor write      ' => sub{ $foo->set_foo(100); },
+    '11. Class::Property ro read    ' => sub{ my $var = $baz->test_ro; },
+    '12. Class::Property wo write   ' => sub{ $baz->test_wo = 100; },
+    '13. Class::Property crw read   ' => sub{ my $var = $baz->custom; },
+    '14. Class::Property crw write  ' => sub{ $baz->custom = 100; },
 });
 
 

@@ -16,6 +16,7 @@ sub STORE
 {
     my( $self, $value ) = @_;
     ${$self}->{'setter'}->(${$self}->{'object'}, $value);
+    return;
 }
 
 1;

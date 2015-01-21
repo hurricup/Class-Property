@@ -1,7 +1,13 @@
 package Foo;
 use strict;
 use Class::Property;
-use parent 'Class::Property';
+
+# Just blessing passed hash
+sub new
+{
+    my( $proto, %data ) = @_;
+    return bless {%data}, ref $proto || $proto;
+}
 
 property(
     'custom' => { 'set' => \&custom_setter, 'get' => \&custom_getter },
@@ -9,11 +15,50 @@ property(
     'custom_set' => { 'set' => \&custom_setter_def, 'get' => undef },
     'custom_ro' => { 'get' => \&custom_ro_getter },
     'custom_wo' => { 'set' => \&custom_wo_setter },
+    'custom_lazy' => { 'get_lazy' => \&lazy_init, 'set' => undef },
+    'custom_lazy2' => { 'get_lazy' => \&lazy_init2, 'set' => undef },
+    'custom_lazy3' => { 'get_lazy' => \&lazy_init3, 'set' => undef },
+    'lazy_custom_setter' => { 'get_lazy' => \&lazy_init4, 'set' => \&set_custom_lazy },
+    'lazy_ro' => {'get_lazy' => \&lazy_ro_init }
 );
 
 rw_property( 'price', 'price3' );
 ro_property( 'price_ro' );
 wo_property( 'price_wo' );
+
+sub lazy_ro_init
+{
+    return 123456;
+}
+
+sub set_custom_lazy
+{
+    my( $self, $value ) = shift;
+    $self->{'custom_lazy_set'} = $value;
+}
+
+sub lazy_init4
+{
+    return 666;
+}
+
+sub lazy_init
+{
+    my $self = shift;
+    return 100;
+}
+
+sub lazy_init2
+{
+    my $self = shift;
+    return 300;
+}
+
+sub lazy_init3
+{
+    my $self = shift;
+    return 500;
+}
 
 sub custom_setter
 {
