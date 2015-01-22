@@ -5,7 +5,7 @@ WriteMakefile(
     AUTHOR              => 'Alexandr Evstigneev <hurricup@evstigneev.com>',
     VERSION_FROM        => 'lib/Class/Property.pm', 
     ABSTRACT_FROM       => 'lib/Class/Property.pm', 
-    MIN_PERL_VERSION    => 5.010,
+    MIN_PERL_VERSION    => 5.016,
     LICENSE             => 'MIT',
     CONFIGURE_REQUIRES => {
         'ExtUtils::MakeMaker' => 0,
