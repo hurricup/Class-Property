@@ -4,7 +4,7 @@ use parent 'Exporter';
 use 5.010;
 use Carp;
 
-our $VERSION = 'v1.0.0';
+our $VERSION = 'v1.0.1';
 
 our @EXPORT;
 
@@ -21,8 +21,10 @@ my $GEN = {
     'default_lazy' => sub
     {
         my( $prop_name, $lazy_init ) = @_;
-        my $lazy_called = 0;
         require Class::Property::RW::Lazy;
+        my $lazy_called = 0;
+        my $dummy;
+        my $wrapper = tie $dummy, 'Class::Property::RW::Lazy', $prop_name, $lazy_init, \$lazy_called;
         
         return sub: lvalue
         {
@@ -32,110 +34,128 @@ my $GEN = {
             }
             else
             {
-                tie my $val, 'Class::Property::RW::Lazy', shift, $prop_name, $lazy_init, \$lazy_called;
-                return $val;
+                $wrapper->set_object(shift);
+                return $dummy;
             }
         };
     },
     'lazy_get_default_set' => sub
     {
         my( $prop_name, $lazy_init, $setter ) = @_;
-        my $lazy_called = 0;
         require Class::Property::RW::Lazy::CustomSet;
+        my $lazy_called = 0;
+        my $dummy;
+        my $wrapper = tie $dummy, 'Class::Property::RW::Lazy::CustomSet', $prop_name, $lazy_init, $setter, \$lazy_called;
         
         return sub: lvalue
         {
-            tie my $val, 'Class::Property::RW::Lazy::CustomSet', shift, $prop_name, $lazy_init, $setter, \$lazy_called;
-            return $val;
+            $wrapper->set_object(shift);
+            return $dummy;
         };
     },
     'custom' => sub
     {
         my( $getter, $setter ) = @_;
         require Class::Property::RW::Custom;
+        my $dummy;
+        my $wrapper = tie $dummy, 'Class::Property::RW::Custom', $getter, $setter;
         
         return sub: lvalue
         {
-            tie my $val, 'Class::Property::RW::Custom', shift, $getter, $setter;
-            return $val;
+            $wrapper->set_object(shift);
+            return $dummy;
         };
     },
     'default_get_custom_set' => sub
     {
         my( $prop_name, $setter ) = @_;
         require Class::Property::RW::CustomSet;
+        my $dummy;
+        my $wrapper = tie $dummy, 'Class::Property::RW::CustomSet', $prop_name, $setter;
         
         return sub: lvalue
         {
-            tie my $val, 'Class::Property::RW::CustomSet', shift, $prop_name, $setter;
-            return $val;
+            $wrapper->set_object(shift);
+            return $dummy;
         };
     },
     'custom_get_default_set' => sub
     {
         my( $prop_name, $getter ) = @_;
         require Class::Property::RW::CustomGet;
+        my $dummy;
+        my $wrapper = tie $dummy, 'Class::Property::RW::CustomGet', $prop_name, $getter;
         
         return sub: lvalue
         {
-            tie my $val, 'Class::Property::RW::CustomGet', shift, $prop_name, $getter;
-            return $val;
+            $wrapper->set_object(shift);
+            return $dummy;
         };
     },
     'default_ro' => sub
     {
         my( $prop_name ) = @_;
         require Class::Property::RO;
+        my $dummy;
+        my $wrapper = tie $dummy, 'Class::Property::RO', $prop_name;
         
         return sub: lvalue
         {
-            tie my $val, 'Class::Property::RO', shift, $prop_name;
-            return $val;
+            $wrapper->set_object(shift);
+            return $dummy;
         };
     },
     'custom_ro' => sub
     {
         my( $prop_name, $getter ) = @_;
         require Class::Property::RO::CustomGet;
+        my $dummy;
+        my $wrapper = tie $dummy, 'Class::Property::RO::CustomGet', $prop_name, $getter;
         
         return sub: lvalue
         {
-            tie my $val, 'Class::Property::RO::CustomGet', shift, $prop_name, $getter;
-            return $val;
+            $wrapper->set_object(shift);
+            return $dummy;
         };
     },
     'lazy_ro' => sub
     {
         my( $prop_name, $lazy_init ) = @_;
-        my $lazy_called = 0;
         require Class::Property::RO::Lazy;
+        my $lazy_called = 0;
+        my $dummy;
+        my $wrapper = tie $dummy, 'Class::Property::RO::Lazy', $prop_name, $lazy_init, \$lazy_called;
         
         return sub: lvalue
         {
-            tie my $val, 'Class::Property::RO::Lazy', shift, $prop_name, $lazy_init, \$lazy_called;
-            return $val;
+            $wrapper->set_object(shift);
+            return $dummy;
         };
     },
     'default_wo' => sub: lvalue
     {
         my( $prop_name ) = @_;
         require Class::Property::WO;
+        my $dummy;
+        my $wrapper = tie $dummy, 'Class::Property::WO', $prop_name;
         
         return sub: lvalue
         {
-            tie my $val, 'Class::Property::WO', shift, $prop_name;
-            return $val;
+            $wrapper->set_object(shift);
+            return $dummy;
         };
     },
     'custom_wo' => sub: lvalue
     {
         my( $prop_name, $setter ) = @_;
         require Class::Property::WO::CustomSet;
+        my $dummy;
+        my $wrapper = tie $dummy, 'Class::Property::WO::CustomSet', $prop_name, $setter;
         
         return sub: lvalue
         {
-            tie my $val, 'Class::Property::WO::CustomSet', shift, $prop_name, $setter;
-            return $val;
+            $wrapper->set_object(shift);
+            return $dummy;
         };
     },
 };
@@ -255,11 +275,11 @@ Class::Property - Perl implementation of class properties.
 
 =head1 VERSION
 
-Version v1.0.0
+Version v1.0.1
 
 =head1 SYNOPSIS
 
-This module allows you to easily create properties for your class. It supports default, custom and lazy properties. Basically, properties are just a fancy way to access object's keys, generally means C<$foo->some_property> is equal to C<$foo->{'some_property'}>.
+This module allows you to easily create properties for your class. It supports default, custom and lazy properties. Basically, properties are just a fancy way to access object's keys, generally means C<$foo-E<gt>some_property> is equal to C<$foo-E<gt>{'some_property'}>.
 
 General syntax: 
 

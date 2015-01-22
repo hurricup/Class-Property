@@ -4,17 +4,16 @@ use parent 'Class::Property::RO';
 
 sub TIESCALAR
 {
-    my( $class, $object, $field, $getter ) = @_;
+    my( $class, $field, $getter ) = @_;
     return bless \{
-        'object' => $object
-        , 'field' => $field
+        'field' => $field
         , 'getter' => $getter
     }, $class;
 }
 
 sub FETCH
 {
-    my( $self ) = @_;
+    my $self = shift;
     return ${$self}->{'getter'}->(${$self}->{'object'});
 }
 

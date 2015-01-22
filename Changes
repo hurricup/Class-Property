@@ -1,5 +1,8 @@
 Revision history for Perl extension Class::Property.
 
+1.0.1 Tue Jan 21 11:08:00 2015
+	- Re-factored custom properties. Works twice faster
+
 1.0.0 Wed Jan 21 20:49:00 2015
     - First release. Implemented and tested properties.
     - Documented

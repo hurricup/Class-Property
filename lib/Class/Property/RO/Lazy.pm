@@ -4,10 +4,9 @@ use parent 'Class::Property::RO';
 
 sub TIESCALAR
 {
-    my( $class, $object, $field, $init, $flag_ref ) = @_;
+    my( $class, $field, $init, $flag_ref ) = @_;
     return bless \{
-        'object' => $object
-        , 'field' => $field
+        'field' => $field
         , 'init' => $init
         , 'flag_ref' => $flag_ref
     }, $class;

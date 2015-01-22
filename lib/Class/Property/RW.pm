@@ -5,17 +5,16 @@ use strict; use warnings FATAL => 'all';
 #
 sub TIESCALAR
 {
-    my( $class, $object, $field ) = @_;
+    my( $class, $field ) = @_;
     return bless \{
-        'object' => $object
-        , 'field' => $field
+        'field' => $field
     }, $class;
 }
 
 sub STORE
 {
-    my( $self, $value ) = @_;
-    ${$self}->{'object'}->{${$self}->{'field'}} = $value;
+    my $self = shift;
+    ${$self}->{'object'}->{${$self}->{'field'}} = shift;
     return;
 }
 
@@ -27,9 +26,15 @@ sub FETCH
 
 sub DESTROY
 {
-    my( $self ) = @_;
+    my $self = shift;
     ${$self} = undef;
     return;
+}
+
+sub set_object
+{
+    my $self = shift;
+    ${$self}->{'object'} = shift;
 }
 
 1;
