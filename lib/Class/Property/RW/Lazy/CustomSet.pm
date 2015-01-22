@@ -17,7 +17,7 @@ sub STORE
 {
     my( $self, $value ) = @_;
     ${$self}->{'setter'}->(${$self}->{'object'}, $value );
-    ${${$self}->{'flag_ref'}}++ unless ${${$self}->{'flag_ref'}};
+    ${${$self}->{'flag_ref'}}++;
     return;
 }
 

@@ -15,7 +15,7 @@ my $GEN = {
         
         return sub: lvalue
         {
-            return shift->{$prop_name};
+            shift->{$prop_name};
         };
     },
     'default_lazy' => sub
@@ -50,7 +50,7 @@ my $GEN = {
         return sub: lvalue
         {
             $wrapper->set_object(shift);
-            return $dummy;
+            $dummy;
         };
     },
     'custom' => sub
@@ -63,7 +63,7 @@ my $GEN = {
         return sub: lvalue
         {
             $wrapper->set_object(shift);
-            return $dummy;
+            $dummy;
         };
     },
     'default_get_custom_set' => sub
@@ -76,7 +76,7 @@ my $GEN = {
         return sub: lvalue
         {
             $wrapper->set_object(shift);
-            return $dummy;
+            $dummy;
         };
     },
     'custom_get_default_set' => sub
@@ -89,7 +89,7 @@ my $GEN = {
         return sub: lvalue
         {
             $wrapper->set_object(shift);
-            return $dummy;
+            $dummy;
         };
     },
     'default_ro' => sub
@@ -102,7 +102,7 @@ my $GEN = {
         return sub: lvalue
         {
             $wrapper->set_object(shift);
-            return $dummy;
+            $dummy;
         };
     },
     'custom_ro' => sub
@@ -115,7 +115,7 @@ my $GEN = {
         return sub: lvalue
         {
             $wrapper->set_object(shift);
-            return $dummy;
+            $dummy;
         };
     },
     'lazy_ro' => sub
@@ -129,7 +129,7 @@ my $GEN = {
         return sub: lvalue
         {
             $wrapper->set_object(shift);
-            return $dummy;
+            $dummy;
         };
     },
     'default_wo' => sub: lvalue
@@ -142,7 +142,7 @@ my $GEN = {
         return sub: lvalue
         {
             $wrapper->set_object(shift);
-            return $dummy;
+            $dummy;
         };
     },
     'custom_wo' => sub: lvalue
@@ -155,7 +155,7 @@ my $GEN = {
         return sub: lvalue
         {
             $wrapper->set_object(shift);
-            return $dummy;
+            $dummy;
         };
     },
 };

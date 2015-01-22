@@ -16,7 +16,7 @@ sub STORE
 {
     my( $self, $value ) = @_;
     ${$self}->{'object'}->{${$self}->{'field'}} = $value;
-    ${${$self}->{'flag_ref'}}++ unless ${${$self}->{'flag_ref'}};
+    ${${$self}->{'flag_ref'}}++;
     return;
 }
 
