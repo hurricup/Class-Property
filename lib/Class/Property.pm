@@ -429,7 +429,7 @@ This module is published under the terms of the MIT license, which basically mea
 
 =item * Main project repository and bugtracker: L<https://github.com/hurricup/Class-Property>
 
-=item * See also: L<Class::Accessor>, L<Class::Accessor::Fast>. 
+=item * See also: L<Class::Variable>, L<Class::Accessor::Lazy>. 
 
 =back
 
