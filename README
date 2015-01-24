@@ -6,6 +6,9 @@ Perl implementation of class properties.
     Documentation on CPAN:
         http://search.cpan.org/~hurricup/Class-Property/lib/Class/Property.pm
 
+    Documentation on MetaCPAN
+        https://metacpan.org/pod/Class::Property
+
     Testing results
         http://www.cpantesters.org/distro/C/Class-Property.html
         
