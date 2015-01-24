@@ -4,7 +4,7 @@ use parent 'Exporter';
 use 5.016;
 use Carp;
 
-our $VERSION = 'v1.0.1';
+our $VERSION = '1.001'; # change in POD
 
 our @EXPORT;
 
@@ -275,7 +275,7 @@ Class::Property - Perl implementation of class properties.
 
 =head1 VERSION
 
-Version v1.0.1
+Version 1.001
 
 =head1 SYNOPSIS
 
