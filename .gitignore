@@ -1,3 +1,9 @@
-/Makefile
-/blib
-/pm_to_blib
+Makefile
+blib
+pm_to_blib
+MYMETA.*
+META.*
+*.bak
+*~
+*.old
+*.tar.gz
