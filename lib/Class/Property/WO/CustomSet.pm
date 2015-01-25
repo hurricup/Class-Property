@@ -5,7 +5,7 @@ use parent 'Class::Property::WO';
 sub TIESCALAR
 {
     my( $class, $field, $setter ) = @_;
-    return bless \{
+    return bless {
         'field' => $field
         , 'setter' => $setter
     }, $class;
@@ -14,7 +14,7 @@ sub TIESCALAR
 sub STORE
 {
     my( $self, $value ) = @_;
-    ${$self}->{'setter'}->(${$self}->{'object'}, $value);
+    $self->{'setter'}->($self->{'object'}, $value);
     return;
 }
 

@@ -5,7 +5,7 @@ use parent 'Class::Property::RW';
 sub TIESCALAR
 {
     my( $class, $getter, $setter ) = @_;
-    return bless \{
+    return bless {
         'getter' => $getter
         , 'setter' => $setter
     }, $class;
@@ -14,13 +14,13 @@ sub TIESCALAR
 sub STORE
 {
     my( $self, $value ) = @_;
-    ${$self}->{'setter'}->(${$self}->{'object'},  $value);
+    $self->{'setter'}->($self->{'object'},  $value);
 }
 
 sub FETCH
 {
     my( $self ) = @_;
-    return ${$self}->{'getter'}->(${$self}->{'object'});
+    return $self->{'getter'}->($self->{'object'});
 }
 
 1;

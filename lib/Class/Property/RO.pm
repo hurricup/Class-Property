@@ -8,7 +8,7 @@ sub STORE
     my( $self, $value ) = @_;
     croak sprintf(
         'Unable to set read-only property %s'
-        , ${$self}->{'field'}
+        , $self->{'field'}
     );
 }
 

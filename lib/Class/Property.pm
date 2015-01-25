@@ -8,6 +8,8 @@ our $VERSION = '1.001'; # change in POD
 
 our @EXPORT;
 
+my $LAZY_INITS = {};
+
 my $GEN = {
     'default' => sub
     {
@@ -22,19 +24,20 @@ my $GEN = {
     {
         my( $prop_name, $lazy_init ) = @_;
         require Class::Property::RW::Lazy;
-        my $lazy_called = 0;
         my $dummy;
-        my $wrapper = tie $dummy, 'Class::Property::RW::Lazy', $prop_name, $lazy_init, \$lazy_called;
+        my $wrapper = tie $dummy, 'Class::Property::RW::Lazy', $prop_name, $lazy_init, $LAZY_INITS;
         
         return sub: lvalue
         {
-            if( $lazy_called )
+            my $self = shift;
+            
+            if( defined $LAZY_INITS->{$self}->{$prop_name} )
             {
-                return shift->{$prop_name};
+                return $self->{$prop_name};
             }
             else
             {
-                $wrapper->set_object(shift);
+                $wrapper->set_object($self);
                 return $dummy;
             }
         };
@@ -43,9 +46,8 @@ my $GEN = {
     {
         my( $prop_name, $lazy_init, $setter ) = @_;
         require Class::Property::RW::Lazy::CustomSet;
-        my $lazy_called = 0;
         my $dummy;
-        my $wrapper = tie $dummy, 'Class::Property::RW::Lazy::CustomSet', $prop_name, $lazy_init, $setter, \$lazy_called;
+        my $wrapper = tie $dummy, 'Class::Property::RW::Lazy::CustomSet', $prop_name, $lazy_init, $setter, $LAZY_INITS;
         
         return sub: lvalue
         {
@@ -122,9 +124,8 @@ my $GEN = {
     {
         my( $prop_name, $lazy_init ) = @_;
         require Class::Property::RO::Lazy;
-        my $lazy_called = 0;
         my $dummy;
-        my $wrapper = tie $dummy, 'Class::Property::RO::Lazy', $prop_name, $lazy_init, \$lazy_called;
+        my $wrapper = tie $dummy, 'Class::Property::RO::Lazy', $prop_name, $lazy_init, $LAZY_INITS;
         
         return sub: lvalue
         {

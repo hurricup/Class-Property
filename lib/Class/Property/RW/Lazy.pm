@@ -5,7 +5,7 @@ use parent 'Class::Property::RW';
 sub TIESCALAR
 {
     my( $class, $field, $init, $flag_ref ) = @_;
-    return bless \{
+    return bless {
         'field' => $field
         , 'init' => $init
         , 'flag_ref' => $flag_ref
@@ -15,22 +15,36 @@ sub TIESCALAR
 sub STORE
 {
     my( $self, $value ) = @_;
-    ${$self}->{'object'}->{${$self}->{'field'}} = $value;
-    ${${$self}->{'flag_ref'}}++;
+    $self->{'object'}->{$self->{'field'}} = $value;
+    if( not defined $self->{'flag_ref'}->{$self->{'object'}}->{$self->{'field'}} )
+    {
+        $self->{'flag_ref'}->{$self->{'object'}}->{$self->{'field'}} = $self->{'object'};
+        Scalar::Util::weaken($self->{'flag_ref'}->{$self->{'object'}}->{$self->{'field'}});
+    }
     return;
 }
 
 sub FETCH
 {
     my( $self ) = @_;
-    
-    if( not ${${$self}->{'flag_ref'}} )
+
+eval{    
+    if( not defined $self->{'flag_ref'}->{$self->{'object'}}->{$self->{'field'}} )
     {
-        ${$self}->{'object'}->{${$self}->{'field'}} = ${$self}->{'init'}->(${$self}->{'object'});
-        ${${$self}->{'flag_ref'}}++;
+        $self->{'flag_ref'}->{$self->{'object'}}->{$self->{'field'}} = $self->{'object'};
+        Scalar::Util::weaken($self->{'flag_ref'}->{$self->{'object'}}->{$self->{'field'}});
+        $self->{'object'}->{$self->{'field'}} = $self->{'init'}->($self->{'object'});
     }
+};
+if( $@ )
+{
+    use Data::Dumper;
+    use Carp qw(confess);
+    print Dumper($self);
+    confess $@ if $@;
+}
     
-    return ${$self}->{'object'}->{${$self}->{'field'}};
+    return $self->{'object'}->{$self->{'field'}};
 }
 
 1;

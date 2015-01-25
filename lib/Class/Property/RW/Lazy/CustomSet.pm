@@ -5,7 +5,7 @@ use parent 'Class::Property::RW';
 sub TIESCALAR
 {
     my( $class, $field, $init, $setter, $flag_ref ) = @_;
-    return bless \{
+    return bless {
         'field' => $field
         , 'init' => $init
         , 'setter' => $setter
@@ -16,8 +16,12 @@ sub TIESCALAR
 sub STORE
 {
     my( $self, $value ) = @_;
-    ${$self}->{'setter'}->(${$self}->{'object'}, $value );
-    ${${$self}->{'flag_ref'}}++;
+    $self->{'setter'}->($self->{'object'}, $value );
+    if( not defined $self->{'flag_ref'}->{$self->{'object'}}->{$self->{'field'}} )
+    {
+        $self->{'flag_ref'}->{$self->{'object'}}->{$self->{'field'}} = $self->{'object'};
+        Scalar::Util::weaken($self->{'flag_ref'}->{$self->{'object'}}->{$self->{'field'}});
+    }
     return;
 }
 
@@ -25,13 +29,14 @@ sub FETCH
 {
     my( $self ) = @_;
     
-    if( not ${${$self}->{'flag_ref'}} )
+    if( not defined $self->{'flag_ref'}->{$self->{'object'}}->{$self->{'field'}} )
     {
-        ${$self}->{'setter'}->(${$self}->{'object'}, ${$self}->{'init'}->(${$self}->{'object'}));
-        ${${$self}->{'flag_ref'}}++;
+        $self->{'flag_ref'}->{$self->{'object'}}->{$self->{'field'}} = $self->{'object'};
+        Scalar::Util::weaken($self->{'flag_ref'}->{$self->{'object'}}->{$self->{'field'}});
+        $self->{'setter'}->($self->{'object'}, $self->{'init'}->($self->{'object'}));
     }
     
-    return ${$self}->{'object'}->{${$self}->{'field'}};
+    return $self->{'object'}->{$self->{'field'}};
 }
 
 1;

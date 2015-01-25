@@ -5,7 +5,7 @@ use parent 'Class::Property::RO';
 sub TIESCALAR
 {
     my( $class, $field, $init, $flag_ref ) = @_;
-    return bless \{
+    return bless {
         'field' => $field
         , 'init' => $init
         , 'flag_ref' => $flag_ref
@@ -16,13 +16,14 @@ sub FETCH
 {
     my( $self ) = @_;
     
-    if( not ${${$self}->{'flag_ref'}} )
+    if( not defined $self->{'flag_ref'}->{$self->{'object'}}->{$self->{'field'}} )
     {
-        ${$self}->{'object'}->{${$self}->{'field'}} = ${$self}->{'init'}->(${$self}->{'object'});
-        ${${$self}->{'flag_ref'}}++;
+        $self->{'flag_ref'}->{$self->{'object'}}->{$self->{'field'}} = $self->{'object'};
+        Scalar::Util::weaken($self->{'flag_ref'}->{$self->{'object'}}->{$self->{'field'}});
+        $self->{'object'}->{$self->{'field'}} = $self->{'init'}->($self->{'object'});
     }
     
-    return ${$self}->{'object'}->{${$self}->{'field'}};
+    return $self->{'object'}->{$self->{'field'}};
 }
 
 1;

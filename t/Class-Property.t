@@ -29,7 +29,7 @@ $foo->{'price_ro'} = 456456;
 is( $foo->price_ro, $foo->{'price_ro'}, 'RO property set indirectly');
 
 eval{ $foo->price_ro = 123; };
-ok( $@ =~ /Unable to set read-only property/, 'RO property writing protection');
+ok( $@ =~ /Unable to set read-only property/, 'RO property writing protection ');
 
 eval{ my $var = $foo->price_wo; };
 ok( $@ =~ /Unable to read write-only property/, 'WO property reading protection');

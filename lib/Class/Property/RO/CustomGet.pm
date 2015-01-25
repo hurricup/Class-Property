@@ -5,7 +5,7 @@ use parent 'Class::Property::RO';
 sub TIESCALAR
 {
     my( $class, $field, $getter ) = @_;
-    return bless \{
+    return bless {
         'field' => $field
         , 'getter' => $getter
     }, $class;
@@ -14,7 +14,7 @@ sub TIESCALAR
 sub FETCH
 {
     my $self = shift;
-    return ${$self}->{'getter'}->(${$self}->{'object'});
+    return $self->{'getter'}->($self->{'object'});
 }
 
 1;

@@ -8,7 +8,7 @@ sub FETCH
     my( $self ) = @_;
     croak sprintf(
         'Unable to read write-only property %s'
-        , ${$self}->{'field'}
+        , $self->{'field'}
     );
 }
 
