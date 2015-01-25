@@ -4,7 +4,7 @@ use parent 'Exporter';
 use 5.016;
 use Carp;
 
-our $VERSION = '1.001'; # change in POD
+our $VERSION = '1.002'; # change in POD
 
 our @EXPORT;
 
@@ -25,13 +25,14 @@ my $GEN = {
         my( $prop_name, $lazy_init ) = @_;
         require Class::Property::RW::Lazy;
         my $dummy;
-        my $wrapper = tie $dummy, 'Class::Property::RW::Lazy', $prop_name, $lazy_init, $LAZY_INITS;
+        my $inits = $LAZY_INITS->{$prop_name} //= {};
+        my $wrapper = tie $dummy, 'Class::Property::RW::Lazy', $prop_name, $lazy_init, $inits;
         
         return sub: lvalue
         {
             my $self = shift;
             
-            if( defined $LAZY_INITS->{$self}->{$prop_name} )
+            if( defined $inits->{$self} )
             {
                 return $self->{$prop_name};
             }
@@ -47,7 +48,8 @@ my $GEN = {
         my( $prop_name, $lazy_init, $setter ) = @_;
         require Class::Property::RW::Lazy::CustomSet;
         my $dummy;
-        my $wrapper = tie $dummy, 'Class::Property::RW::Lazy::CustomSet', $prop_name, $lazy_init, $setter, $LAZY_INITS;
+        my $inits = $LAZY_INITS->{$prop_name} //= {};
+        my $wrapper = tie $dummy, 'Class::Property::RW::Lazy::CustomSet', $prop_name, $lazy_init, $setter, $inits;
         
         return sub: lvalue
         {
@@ -125,7 +127,8 @@ my $GEN = {
         my( $prop_name, $lazy_init ) = @_;
         require Class::Property::RO::Lazy;
         my $dummy;
-        my $wrapper = tie $dummy, 'Class::Property::RO::Lazy', $prop_name, $lazy_init, $LAZY_INITS;
+        my $inits = $LAZY_INITS->{$prop_name} //= {};
+        my $wrapper = tie $dummy, 'Class::Property::RO::Lazy', $prop_name, $lazy_init, $inits;
         
         return sub: lvalue
         {
@@ -276,7 +279,7 @@ Class::Property - Perl implementation of class properties.
 
 =head1 VERSION
 
-Version 1.001
+Version 1.002
 
 =head1 SYNOPSIS
 
@@ -399,26 +402,34 @@ Such class will have a lazy property: C<family>. If some code will try to access
 
 Here is a comparision of different properties and alternatives as L<C<Class::Accessor>> and L<C<Class::Accessor::Fast>>
 
-     1. Direct hash read           :  1 wallclock secs ( 0.75 usr +  0.00 sys =  0.75 CPU) @ 13351134.85/s (n=10000000)
-     2. Direct hash write          :  1 wallclock secs ( 0.73 usr +  0.00 sys =  0.73 CPU) @ 13642564.80/s (n=10000000)
-     3. Class::Property rw read    :  3 wallclock secs ( 2.50 usr +  0.00 sys =  2.50 CPU) @ 4006410.26/s (n=10000000)
-     4. Class::Property rw write   :  3 wallclock secs ( 2.21 usr +  0.00 sys =  2.21 CPU) @ 4516711.83/s (n=10000000)
-     5. Class::Property lrw read   :  2 wallclock secs ( 2.32 usr +  0.00 sys =  2.32 CPU) @ 4302925.99/s (n=10000000)
-     6. Class::Property lrw write  :  3 wallclock secs ( 2.14 usr +  0.00 sys =  2.14 CPU) @ 4677268.48/s (n=10000000)
-     7. Class::Accessor::Fast read :  3 wallclock secs ( 3.28 usr +  0.00 sys =  3.28 CPU) @ 3052503.05/s (n=10000000)
-     8. Class::Accessor::Fast write:  4 wallclock secs ( 3.87 usr +  0.00 sys =  3.87 CPU) @ 2585315.41/s (n=10000000)
-     9. Class::Accessor read       :  7 wallclock secs ( 6.41 usr +  0.00 sys =  6.41 CPU) @ 1559819.06/s (n=10000000)
-    10. Class::Accessor write      :  8 wallclock secs ( 7.85 usr +  0.01 sys =  7.86 CPU) @ 1271940.98/s (n=10000000)
-    11. Class::Property ro read    : 37 wallclock secs (36.22 usr +  0.00 sys = 36.22 CPU) @ 276067.69/s (n=10000000)
-    12. Class::Property wo write   : 36 wallclock secs (35.96 usr +  0.00 sys = 35.96 CPU) @ 278102.23/s (n=10000000)
-    13. Class::Property crw read   : 40 wallclock secs (39.83 usr +  0.02 sys = 39.84 CPU) @ 250985.12/s (n=10000000)
-    14. Class::Property crw write  : 40 wallclock secs (41.73 usr +  0.00 sys = 41.73 CPU) @ 239635.75/s (n=10000000)
-    
-We can see, that default properties and default lazy properties are fastest and works 3 times slower than direct accessing to hash elements. Custom properties (RO, WO with custom getters and/or setters) are really slow, about 50 times slower, than direct access.
+     1. Direct hash read           :  1 wallclock secs ( 0.78 usr +  0.00 sys =  0.78 CPU) @ 12820512.82/s (n=10000000)
+     2. Direct hash write          :  0 wallclock secs ( 0.80 usr +  0.00 sys =  0.80 CPU) @ 12562814.07/s (n=10000000)
+     3. Class::Property rw read    :  3 wallclock secs ( 2.54 usr +  0.00 sys =  2.54 CPU) @ 3930817.61/s (n=10000000)
+     4. Class::Property rw write   :  2 wallclock secs ( 2.26 usr +  0.00 sys =  2.26 CPU) @ 4420866.49/s (n=10000000)
+     5. Class::Accessor::Fast read :  4 wallclock secs ( 3.28 usr +  0.00 sys =  3.28 CPU) @ 3052503.05/s (n=10000000)
+     6. Class::Accessor::Fast write:  4 wallclock secs ( 4.06 usr +  0.00 sys =  4.06 CPU) @ 2465483.23/s (n=10000000)
+     7. Class::Property lrw read   :  6 wallclock secs ( 5.82 usr +  0.00 sys =  5.82 CPU) @ 1718508.33/s (n=10000000)
+     8. Class::Property lrw write  :  4 wallclock secs ( 5.60 usr +  0.00 sys =  5.60 CPU) @ 1785395.47/s (n=10000000)
+     9. Class::Accessor read       :  6 wallclock secs ( 6.83 usr +  0.00 sys =  6.83 CPU) @ 1463486.02/s (n=10000000)
+    10. Class::Accessor write      :  8 wallclock secs ( 8.03 usr +  0.00 sys =  8.03 CPU) @ 1244709.98/s (n=10000000)
+    11. Class::Property ro read    : 16 wallclock secs (15.26 usr +  0.00 sys = 15.26 CPU) @ 655436.85/s (n=10000000)
+    12. Class::Property wo write   : 14 wallclock secs (14.18 usr +  0.00 sys = 14.18 CPU) @ 705168.89/s (n=10000000)
+    13. Class::Property crw read   : 18 wallclock secs (17.19 usr +  0.00 sys = 17.19 CPU) @ 581699.73/s (n=10000000)
+    14. Class::Property crw write  : 20 wallclock secs (19.58 usr +  0.00 sys = 19.58 CPU) @ 510777.40/s (n=10000000)    
 
-=head1 BUGS AND IMPROVEMENTS
+Results shows that:
 
-If you found any bug and/or want to make some improvement, feel free to participate in the project on GitHub: L<https://github.com/hurricup/Class-Property>
+=over
+
+=item * Default properties works 3 times slower than direct access, but still faster than L<Class::Accessor::Fast> accessors.
+
+=item * Lazy properties works 7.2 times slower than direct access, but still faster than L<Class::Accessor> accessors.
+
+=item * RO and WO properties works 18.6 times slower than direct access.
+
+=item * Custom properties works 23.2 times slower than direct access.
+
+=back
 
 =head1 LICENSE
 
@@ -429,6 +440,12 @@ This module is published under the terms of the MIT license, which basically mea
 =over
 
 =item * Main project repository and bugtracker: L<https://github.com/hurricup/Class-Property>
+
+=item * Testing results: L<http://www.cpantesters.org/distro/C/Class-Property.html>
+        
+=item * AnnoCPAN, Annotated CPAN documentation: L<http://annocpan.org/dist/Class-Property>
+
+=item * CPAN Ratings: L<http://cpanratings.perl.org/d/Class-Property>
 
 =item * See also: L<Class::Variable>, L<Class::Accessor::Lazy>. 
 

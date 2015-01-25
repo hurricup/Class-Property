@@ -16,10 +16,10 @@ sub STORE
 {
     my( $self, $value ) = @_;
     $self->{'object'}->{$self->{'field'}} = $value;
-    if( not defined $self->{'flag_ref'}->{$self->{'object'}}->{$self->{'field'}} )
+    if( not defined $self->{'flag_ref'}->{$self->{'object'}} )
     {
-        $self->{'flag_ref'}->{$self->{'object'}}->{$self->{'field'}} = $self->{'object'};
-        Scalar::Util::weaken($self->{'flag_ref'}->{$self->{'object'}}->{$self->{'field'}});
+        $self->{'flag_ref'}->{$self->{'object'}} = $self->{'object'};
+        Scalar::Util::weaken($self->{'flag_ref'}->{$self->{'object'}});
     }
     return;
 }
@@ -29,10 +29,10 @@ sub FETCH
     my( $self ) = @_;
 
 eval{    
-    if( not defined $self->{'flag_ref'}->{$self->{'object'}}->{$self->{'field'}} )
+    if( not defined $self->{'flag_ref'}->{$self->{'object'}} )
     {
-        $self->{'flag_ref'}->{$self->{'object'}}->{$self->{'field'}} = $self->{'object'};
-        Scalar::Util::weaken($self->{'flag_ref'}->{$self->{'object'}}->{$self->{'field'}});
+        $self->{'flag_ref'}->{$self->{'object'}} = $self->{'object'};
+        Scalar::Util::weaken($self->{'flag_ref'}->{$self->{'object'}});
         $self->{'object'}->{$self->{'field'}} = $self->{'init'}->($self->{'object'});
     }
 };

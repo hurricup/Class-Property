@@ -44,16 +44,18 @@ for( my $i = 0; $i < 3; $i++ )
 
 use Benchmark qw(timethese);
 
-timethese( 5000000, 
+printf "Benchmarking for Class::Property %s\n", $Class::Property::VERSION;
+
+timethese( 10000000, 
 {
     ' 1. Direct hash read           ' => sub{ my $var = $foo->{'testfield'}; },
     ' 2. Direct hash write          ' => sub{ $foo->{'testfield'} = 100; },
     ' 3. Class::Property rw read    ' => sub{ my $var = $baz->test_rw; },
     ' 4. Class::Property rw write   ' => sub{ $baz->test_rw = 100; },
-    ' 5. Class::Property lrw read   ' => sub{ my $var = $baz->test_lazy; },
-    ' 6. Class::Property lrw write  ' => sub{ $baz->test_lazy = 100; },
-    ' 7. Class::Accessor::Fast read ' => sub{ my $var = $bar->get_bar(); },
-    ' 8. Class::Accessor::Fast write' => sub{ $bar->set_bar(100); },
+    ' 5. Class::Accessor::Fast read ' => sub{ my $var = $bar->get_bar(); },
+    ' 6. Class::Accessor::Fast write' => sub{ $bar->set_bar(100); },
+    ' 7. Class::Property lrw read   ' => sub{ my $var = $baz->test_lazy; },
+    ' 8. Class::Property lrw write  ' => sub{ $baz->test_lazy = 100; },
     ' 9. Class::Accessor read       ' => sub{ my $var = $foo->get_foo(); },
     '10. Class::Accessor write      ' => sub{ $foo->set_foo(100); },
     '11. Class::Property ro read    ' => sub{ my $var = $baz->test_ro; },

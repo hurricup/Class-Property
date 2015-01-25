@@ -1,5 +1,8 @@
 Revision history for Perl extension Class::Property.
 
+1.002 Sun Jan 25 11:56:00 215
+	- Fixed bug with lazy init flag, moved from closure to a hash.
+
 1.0.1 Tue Jan 21 11:08:00 2015
 	- Re-factored custom properties. Works twice faster
 
