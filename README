@@ -1,7 +1,5 @@
-Class-Property 
-==============
-
-Perl implementation of class properties.
+Class-Property - Perl implementation of class properties
+========================================================
 
     Documentation on CPAN:
         http://search.cpan.org/~hurricup/Class-Property/lib/Class/Property.pm
@@ -9,8 +7,11 @@ Perl implementation of class properties.
     Documentation on MetaCPAN
         https://metacpan.org/pod/Class::Property
 
-    Testing results
+    CPAN Testers reports
         http://www.cpantesters.org/distro/C/Class-Property.html
+        
+    Testers matrix
+        http://matrix.cpantesters.org/?dist=Class-Property
         
     AnnoCPAN, Annotated CPAN documentation
         http://annocpan.org/dist/Class-Property
