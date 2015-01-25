@@ -20,3 +20,5 @@ t/critic.t
 t/Foo.pm
 timethese/compare.pl
 TODO
+META.json			Module JSON meta-data (added by MakeMaker)
+META.yml			Module YAML meta-data (added by MakeMaker)
