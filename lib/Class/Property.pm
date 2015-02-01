@@ -402,26 +402,27 @@ Such class will have a lazy property: C<family>. If some code will try to access
 
 Here is a comparision of different properties and alternatives as L<C<Class::Accessor>> and L<C<Class::Accessor::Fast>>
 
-     1. Direct hash read           :  1 wallclock secs ( 0.78 usr +  0.00 sys =  0.78 CPU) @ 12820512.82/s (n=10000000)
-     2. Direct hash write          :  0 wallclock secs ( 0.80 usr +  0.00 sys =  0.80 CPU) @ 12562814.07/s (n=10000000)
-     3. Class::Property rw read    :  3 wallclock secs ( 2.54 usr +  0.00 sys =  2.54 CPU) @ 3930817.61/s (n=10000000)
-     4. Class::Property rw write   :  2 wallclock secs ( 2.26 usr +  0.00 sys =  2.26 CPU) @ 4420866.49/s (n=10000000)
-     5. Class::Accessor::Fast read :  4 wallclock secs ( 3.28 usr +  0.00 sys =  3.28 CPU) @ 3052503.05/s (n=10000000)
-     6. Class::Accessor::Fast write:  4 wallclock secs ( 4.06 usr +  0.00 sys =  4.06 CPU) @ 2465483.23/s (n=10000000)
-     7. Class::Property lrw read   :  6 wallclock secs ( 5.82 usr +  0.00 sys =  5.82 CPU) @ 1718508.33/s (n=10000000)
-     8. Class::Property lrw write  :  4 wallclock secs ( 5.60 usr +  0.00 sys =  5.60 CPU) @ 1785395.47/s (n=10000000)
-     9. Class::Accessor read       :  6 wallclock secs ( 6.83 usr +  0.00 sys =  6.83 CPU) @ 1463486.02/s (n=10000000)
-    10. Class::Accessor write      :  8 wallclock secs ( 8.03 usr +  0.00 sys =  8.03 CPU) @ 1244709.98/s (n=10000000)
-    11. Class::Property ro read    : 16 wallclock secs (15.26 usr +  0.00 sys = 15.26 CPU) @ 655436.85/s (n=10000000)
-    12. Class::Property wo write   : 14 wallclock secs (14.18 usr +  0.00 sys = 14.18 CPU) @ 705168.89/s (n=10000000)
-    13. Class::Property crw read   : 18 wallclock secs (17.19 usr +  0.00 sys = 17.19 CPU) @ 581699.73/s (n=10000000)
-    14. Class::Property crw write  : 20 wallclock secs (19.58 usr +  0.00 sys = 19.58 CPU) @ 510777.40/s (n=10000000)    
-
+     1. Direct hash read           :  0 wallclock secs ( 0.61 usr +  0.00 sys =  0.61 CPU) @ 16447368.42/s (n=10000000)
+     2. Direct hash write          :  0 wallclock secs ( 0.78 usr +  0.00 sys =  0.78 CPU) @ 12820512.82/s (n=10000000)
+     3. Class::XSAccessor lv read  :  1 wallclock secs ( 1.19 usr +  0.00 sys =  1.19 CPU) @ 8431703.20/s (n=10000000)
+     4. Class::XSAccessor lv write :  2 wallclock secs ( 1.39 usr +  0.00 sys =  1.39 CPU) @ 7199424.05/s (n=10000000)
+     5. Class::Property rw read    :  3 wallclock secs ( 2.59 usr +  0.00 sys =  2.59 CPU) @ 3861003.86/s (n=10000000)
+     6. Class::Property rw write   :  3 wallclock secs ( 2.46 usr +  0.00 sys =  2.46 CPU) @ 4056795.13/s (n=10000000)
+     7. Class::Accessor::Fast read :  3 wallclock secs ( 2.87 usr +  0.00 sys =  2.87 CPU) @ 3484320.56/s (n=10000000)
+     8. Class::Accessor::Fast write:  4 wallclock secs ( 4.20 usr +  0.02 sys =  4.21 CPU) @ 2374169.04/s (n=10000000)
+     9. Class::Property lrw read   :  4 wallclock secs ( 5.46 usr +  0.00 sys =  5.46 CPU) @ 1831501.83/s (n=10000000)
+    10. Class::Property lrw write  :  4 wallclock secs ( 5.46 usr +  0.00 sys =  5.46 CPU) @ 1831501.83/s (n=10000000)
+    11. Class::Accessor read       :  5 wallclock secs ( 6.40 usr +  0.00 sys =  6.40 CPU) @ 1563721.66/s (n=10000000)
+    12. Class::Accessor write      :  8 wallclock secs ( 7.74 usr +  0.02 sys =  7.75 CPU) @ 1289656.95/s (n=10000000)
+    13. Class::Property ro read    : 12 wallclock secs (11.19 usr +  0.00 sys = 11.19 CPU) @ 894054.54/s (n=10000000)
+    14. Class::Property wo write   : 12 wallclock secs (11.75 usr +  0.00 sys = 11.75 CPU) @ 851353.65/s (n=10000000)
+    15. Class::Property crw read   : 13 wallclock secs (12.42 usr +  0.00 sys = 12.42 CPU) @ 805347.51/s (n=10000000)
+    16. Class::Property crw write  : 15 wallclock secs (14.45 usr +  0.00 sys = 14.45 CPU) @ 692233.14/s (n=10000000)
 Results shows that:
 
 =over
 
-=item * Default properties works 3 times slower than direct access, but still faster than L<Class::Accessor::Fast> accessors.
+=item * Default properties works 3 times slower than direct access, 2 times slower than L<Class::XSAccessor>, but still faster than L<Class::Accessor::Fast> accessors.
 
 =item * Lazy properties works 7.2 times slower than direct access, but still faster than L<Class::Accessor> accessors.
 
